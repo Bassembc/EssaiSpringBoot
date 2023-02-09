@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,6 +15,7 @@ public class MachineService {
     @Autowired
     MachineRepository machineRepository;
 
+
     public Optional<Machine> getMachine(Long id) {
         return machineRepository.findById(id);
     }
@@ -21,6 +23,7 @@ public class MachineService {
     public Iterable<Machine> getMachines() {
         return machineRepository.findAll();
     }
+
 
     public void deleteMachine( Long id) {
         machineRepository.deleteById(id);

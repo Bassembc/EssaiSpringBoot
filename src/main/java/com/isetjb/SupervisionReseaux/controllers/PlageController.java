@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-
+@RestController
 public class PlageController {
     @Autowired
     PlageService plageService;
@@ -25,7 +25,6 @@ public class PlageController {
         } else {
             return null;
         }
-
     }
 
     @DeleteMapping("/plage/{id}")
@@ -40,19 +39,14 @@ public class PlageController {
         if (e.isPresent()) {
             Plage currentPlage = e.get();
 
-            String startAdress = plage.getStartAddress();
-
-            if (startAdress != null) {
-                currentPlage.setStartAddress(startAdress);
+            String startAddress = plage.getStartAddress();
+            String endAddress = plage.getEndAddress();
+            if (startAddress!=null ) {
+                currentPlage.setStartAddress(startAddress);
             }
-
-
-            String endAdress = plage.getEndAddress();
-
-            if (endAdress != null) {
-                currentPlage.setEndAddress(endAdress);
+            if (endAddress!=null ) {
+                currentPlage.setEndAddress(endAddress);
             }
-
         }
         return plage;
     }

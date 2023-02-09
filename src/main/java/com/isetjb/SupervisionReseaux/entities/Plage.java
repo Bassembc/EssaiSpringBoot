@@ -9,15 +9,14 @@ import java.util.List;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
+@Table(name = "plages")
 public class Plage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int startAddress;
-    private int endAddress;
-    //private String netIp;
-    //private int choixUser;
+    private String startAddress;
+    private String endAddress;
 
     @OneToMany(mappedBy = "plage")
    private List<Machine> machines ;

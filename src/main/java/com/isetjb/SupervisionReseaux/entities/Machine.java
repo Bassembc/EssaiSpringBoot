@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
+@Table(name = "machines")
 public class Machine {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +23,6 @@ public class Machine {
 
     @ManyToOne()
     private Plage plage;
+
 
 }
