@@ -49,6 +49,7 @@ public class ScanPlageController {
         plage.setEndAddress(pplage.getEndAddress());
         plageService.savePlage(plage);
 
+
         byte[] ipDebut = {
                 (byte) Integer.parseInt(adresseDebut[0]),
                 (byte) Integer.parseInt(adresseDebut[1]),
@@ -74,10 +75,12 @@ public class ScanPlageController {
                 InetAddress address = InetAddress.getByAddress(ipDebut);
                 if (isAlive(address.getHostAddress())) {
                     Machine machine = new Machine();
-                    machine.setPlage(plage);
                     machine.setDateDebutConnexion(LocalDateTime.now());
-                    machine.setIpAddress(address.getHostAddress());
+                    machine.setHostName(address.getHostName());
+                    machine.setPlage(plage);
+
                     machineList.add(machine);
+
                     machineService.saveMachine(machine);
 
                 }
@@ -86,6 +89,8 @@ public class ScanPlageController {
                 System.out.println(e.getMessage());
             }
         }
+       // plageService.addMachinePlage(plage.getId());
+
         scanPlageService.saveScanPlage(scanPlage);
         return scanPlage;
     }

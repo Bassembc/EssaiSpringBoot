@@ -1,11 +1,13 @@
 package com.isetjb.SupervisionReseaux.services;
 
+import com.isetjb.SupervisionReseaux.entities.Machine;
 import com.isetjb.SupervisionReseaux.entities.Plage;
 import com.isetjb.SupervisionReseaux.repositories.PlageRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -25,6 +27,10 @@ public class PlageService {
     public void deletePlage( Long id) {
         plageRepository.deleteById(id);
     }
+   /* public ArrayList<Machine> addMachinePlage(Long id){
+
+    return plageRepository.findMachines(id);
+    }*/
 
     public Plage savePlage(Plage plage) {
         Plage savedPlage = plageRepository.save(plage);

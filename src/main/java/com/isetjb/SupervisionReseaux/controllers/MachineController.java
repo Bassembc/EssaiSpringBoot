@@ -44,10 +44,10 @@ public class MachineController {
         if (e.isPresent()) {
             Machine currentMachine = e.get();
 
-            String ipAdress = machine.getIpAddress();
+            String ipAdress = machine.getHostName();
 
             if (ipAdress != null) {
-                currentMachine.setIpAddress(ipAdress);
+                currentMachine.setHostName(ipAdress);
             }
             Plage plage = machine.getPlage();
             if (plage != null) {

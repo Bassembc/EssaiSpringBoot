@@ -16,6 +16,7 @@ public class ScanPlage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "dateScan")
     private LocalDateTime dateScan;
     @ManyToOne
     private Plage plage;
