@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
-@Table(name = "balayageports")
+@Table(name = "balayagePorts")
 public class BalayagePort {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

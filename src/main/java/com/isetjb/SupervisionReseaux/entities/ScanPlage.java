@@ -11,12 +11,12 @@ import java.util.List;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
-@Table(name = "scanplages")
+@Table(name = "scanPlages")
 public class ScanPlage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "dateScan")
+   
     private LocalDateTime dateScan;
     @ManyToOne
     private Plage plage;

@@ -15,9 +15,9 @@ public class Plage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "adresseDebut")
+    
     private String startAddress;
-    @Column(name = "adresseFin")
+    
     private String endAddress;
 
     @OneToMany(mappedBy = "plage")
