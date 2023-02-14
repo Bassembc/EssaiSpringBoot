@@ -11,16 +11,18 @@ import com.isetjb.SupervisionReseaux.services.PlageService;
 import com.isetjb.SupervisionReseaux.services.ScanPlageService;
 import com.isetjb.SupervisionReseaux.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+
+import static java.lang.Thread.MAX_PRIORITY;
+import static java.lang.Thread.MIN_PRIORITY;
 
 
 @RestController
@@ -33,78 +35,81 @@ public class ScanPlageController {
     UserService userService;
     @Autowired
     PlageService plageService;
-
     @PostMapping("/scanPlage")
-    public ScanPlage checkHosts(@RequestBody Plage pplage) {
+    public ScanPlage checkHosts(@RequestBody Plage laPlage) {
+
+
         User user = new User();
         user.setUserName("Foulen");
         user.setPassword("pasMotPasse");
         userService.saveUser(user);
-
-        String[] adresseDebut =pplage.getStartAddress().split("\\.");
-        String[] adresseFin =pplage.getEndAddress().split("\\.");
-
+        String[] adresseDebut =laPlage.getAddresse().split("\\.");
         Plage plage = new Plage();
-        plage.setStartAddress(pplage.getStartAddress());
-        plage.setEndAddress(pplage.getEndAddress());
-        plageService.savePlage(plage);
-
-
-        byte[] ipDebut = {
-                (byte) Integer.parseInt(adresseDebut[0]),
-                (byte) Integer.parseInt(adresseDebut[1]),
-                (byte) Integer.parseInt(adresseDebut[2]),
-                (byte) Integer.parseInt(adresseDebut[3])
-        };
-        byte[] ipFin = {
-                (byte) Integer.parseInt(adresseFin[0]),
-                (byte) Integer.parseInt(adresseFin[1]),
-                (byte) Integer.parseInt(adresseFin[2]),
-                (byte) Integer.parseInt(adresseFin[3])
-        };
+        plage.setAddresse(laPlage.getAddresse());
 
         ScanPlage scanPlage = new ScanPlage();
         scanPlage.setDateScan(LocalDateTime.now());
         scanPlage.setPlage(plage);
         scanPlage.setUser(user);
-
         List<Machine> machineList= new ArrayList<>();
-        for (int i = ipDebut[3]; i < ipFin[3]; i++) {
-            ipDebut[3]=(byte)i;
-            try {
-                InetAddress address = InetAddress.getByAddress(ipDebut);
-                if (isAlive(address.getHostAddress())) {
-                    Machine machine = new Machine();
-                    machine.setDateDebutConnexion(LocalDateTime.now());
-                    machine.setHostName(address.getHostName());
-                    machine.setPlage(plage);
+        Thread loopPlage=new Thread(()->{
 
-                    machineList.add(machine);
+                for(int i = 1; i < 255; i++){
+                    String param=String.valueOf(i);
+                    Thread threadJob=new Thread(param){
+                        @Override
+                        public void run(){
+                            try{
+                                String ad=adresseDebut[0]+"."+adresseDebut[1]+"."+adresseDebut[2]+"."+param;
+                                InetAddress address = InetAddress.getByName(ad);
+                                if(address.isReachable(500)){
+                                    System.out.println(address.getCanonicalHostName());
+                                    Machine machine = new Machine();
+                                    machine.setDateDebutConnexion(LocalDateTime.now());
+                                    machine.setHostName(address.getHostName());
+                                    machineService.saveMachine(machine);
+                                    machineList.add(machine);
 
-                    machineService.saveMachine(machine);
+
+
+                                }
+
+                            } catch (Exception e) {
+                                System.out.println(e.getMessage());
+                            }
+
+                        }
+                    };
+                    threadJob.setPriority(MIN_PRIORITY);
+                    threadJob.start();
 
                 }
+            });
+       loopPlage.setPriority(MAX_PRIORITY);
+       loopPlage.start();
 
-            } catch (UnknownHostException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-       // plageService.addMachinePlage(plage.getId());
 
+        plage.setMachines(machineList);
+        plageService.savePlage(plage);
         scanPlageService.saveScanPlage(scanPlage);
-        return scanPlage;
-    }
-    private boolean isAlive(String Ipv4Adr) {
-        Process p1;
-        boolean reachable = false;
-        try {
-            p1 = java.lang.Runtime.getRuntime().exec("ping -w 2 -n 2 " + Ipv4Adr);
-            int returnVal = p1.waitFor();
-            reachable = (returnVal == 0);
-        } catch (InterruptedException | IOException e) {
-            System.out.println(e.getMessage());
-        }
-        return reachable;
-    }
 
+        return scanPlage;
+
+    }
+    @GetMapping("/recupererLesScansPlage")
+    public Iterable<ScanPlage> getScanPlages(){
+
+        return scanPlageService.getScanPlages();
+    }
+    @GetMapping("/recupererScanPlage/{id}")
+    public Optional<ScanPlage> getScanPlage(@PathVariable("id") Long id){
+
+        return scanPlageService.getScanPlage(id);
+    }
+    @DeleteMapping("/ScanPlage/{id}")
+    public void deleteScanPlage(@PathVariable("id") Long id){
+        scanPlageService.deleteScanPlage(id);
+    }
 }
+
+

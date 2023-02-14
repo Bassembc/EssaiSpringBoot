@@ -1,17 +1,24 @@
 package com.isetjb.SupervisionReseaux.controllers;
 
-
 import com.isetjb.SupervisionReseaux.entities.Plage;
 import com.isetjb.SupervisionReseaux.services.PlageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 @RestController
 public class PlageController {
     @Autowired
     PlageService plageService;
-
+    @PostMapping("/ajouterPlage")
+    public Plage addPlage(@RequestBody Plage plage){
+        String adresse= plage.getAddresse();
+        Plage ajouterPlage=new Plage();
+        ajouterPlage.setAddresse(adresse);
+        plageService.savePlage(ajouterPlage);
+        return ajouterPlage;
+    }
     @GetMapping("/plages")
     public Iterable<Plage> getPlage() {
         return plageService.getPlages();
@@ -39,14 +46,12 @@ public class PlageController {
         if (e.isPresent()) {
             Plage currentPlage = e.get();
 
-            String startAddress = plage.getStartAddress();
-            String endAddress = plage.getEndAddress();
+            String startAddress = plage.getAddresse();
+
             if (startAddress!=null ) {
-                currentPlage.setStartAddress(startAddress);
+                currentPlage.setAddresse(startAddress);
             }
-            if (endAddress!=null ) {
-                currentPlage.setEndAddress(endAddress);
-            }
+
         }
         return plage;
     }

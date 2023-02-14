@@ -27,10 +27,7 @@ public class PlageService {
     public void deletePlage( Long id) {
         plageRepository.deleteById(id);
     }
-   /* public ArrayList<Machine> addMachinePlage(Long id){
 
-    return plageRepository.findMachines(id);
-    }*/
 
     public Plage savePlage(Plage plage) {
         Plage savedPlage = plageRepository.save(plage);

@@ -22,9 +22,6 @@ public class Machine {
     
     private LocalDateTime dateDebutConnexion;
 
-
-    @ManyToOne()
-    private Plage plage;
-
-
+    @OneToOne
+    private User user;
 }

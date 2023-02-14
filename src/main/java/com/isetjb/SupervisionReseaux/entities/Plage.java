@@ -16,10 +16,9 @@ public class Plage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    private String startAddress;
+    private String addresse;
     
-    private String endAddress;
 
-    @OneToMany(mappedBy = "plage")
+    @OneToMany()
    private List<Machine> machines ;
 }
