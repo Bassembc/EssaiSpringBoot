@@ -24,7 +24,6 @@ public class UserController {
         String password=user.getPassword();
         Optional<User> utilisateur= userService.getUserConnected(userName,password);
         if(utilisateur.isPresent()){
-            userService.saveUser(utilisateur.get());
             Machine machine =new Machine();
             machine.setUser(utilisateur.get());
             machine.setDateDebutConnexion(LocalDateTime.now());
@@ -36,11 +35,8 @@ public class UserController {
     }
     @PostMapping("/addUser")
     public User addUser(@RequestBody User user){
-        User userAdded = new User();
-        userAdded.setUserName(user.getUserName());
-        userAdded.setPassword(user.getPassword());
-        userService.saveUser(userAdded);
-        return userAdded;
+        userService.saveUser(user);
+        return user;
 
     }
     @PutMapping("/user/{id}")
