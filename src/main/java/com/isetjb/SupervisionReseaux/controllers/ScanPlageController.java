@@ -11,6 +11,7 @@ import com.isetjb.SupervisionReseaux.services.PlageService;
 import com.isetjb.SupervisionReseaux.services.ScanPlageService;
 import com.isetjb.SupervisionReseaux.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 
 import static java.lang.Thread.MAX_PRIORITY;
@@ -36,7 +38,8 @@ public class ScanPlageController {
     @Autowired
     PlageService plageService;
     @PostMapping("/scanPlage")
-    public List<Machine> checkHosts(@RequestBody Plage laPlage) {
+    @Async
+    public CompletableFuture<List<Machine>> checkHosts(@RequestBody Plage laPlage) {
 
 
         User user = new User();
@@ -63,12 +66,13 @@ public class ScanPlageController {
                                 String ad=adresseDebut[0]+"."+adresseDebut[1]+"."+adresseDebut[2]+"."+param;
                                 InetAddress address = InetAddress.getByName(ad);
                                 if(address.isReachable(500)){
-                                    Machine machine = new Machine();
-                                    machine.setDateDebutConnexion(LocalDateTime.now());
-                                    machine.setIpAddresse(ad);
-                                    machineService.saveMachine(machine);
-                                    machineList.add(machine);
 
+                                    Optional<Machine> machine = machineService.getMachineByUser(user) ;
+                                    if(machine.isPresent()){
+                                        machine.get().setIpAddresse(ad);
+                                        machineList.add(machine.get());
+                                        machineService.saveMachine(machine.get());
+                                    }
 
                                 }
 
@@ -91,7 +95,7 @@ public class ScanPlageController {
        loopPlage.start();
 
 
-        return machineList;
+        return CompletableFuture.completedFuture(machineList);
 
     }
     @GetMapping("/recupererLesScansPlage")

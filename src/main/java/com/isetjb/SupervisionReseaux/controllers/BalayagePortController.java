@@ -5,6 +5,7 @@ import com.isetjb.SupervisionReseaux.entities.Machine;
 import com.isetjb.SupervisionReseaux.services.BalayagePortService;
 import com.isetjb.SupervisionReseaux.services.MachineService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static java.lang.Thread.MAX_PRIORITY;
 import static java.lang.Thread.MIN_PRIORITY;
@@ -28,7 +30,8 @@ public class BalayagePortController {
     @Autowired
     MachineService machineService;
     @PostMapping("/balayerPortTcp/{id}")
-    public List<Integer> balayagePortTcp(@PathVariable("id") Long id) {
+    @Async
+    public CompletableFuture<List<Integer>> balayagePortTcp(@PathVariable("id") Long id)  {
         Optional<Machine> machine = machineService.getMachine(id);
         BalayagePort balayagePort=new BalayagePort();
         List<Integer> listeTcp=new ArrayList<>();
@@ -37,7 +40,7 @@ public class BalayagePortController {
             balayagePort.setMachine(machine.get());
 
             Thread loopPort=new Thread(()->{
-                for(int i = 1; i <= 65536; i++){
+                for(int i = 0; i <= 1023; i++){
                     String param=String.valueOf(i);
                     Thread threadJob=new Thread(param){
                         @Override
@@ -70,10 +73,11 @@ public class BalayagePortController {
 
         }
         balayagePortService.saveBalayagePort(balayagePort);
-        return listeTcp;
+        return CompletableFuture.completedFuture(listeTcp);
     }
     @PostMapping("/balayerPortUdp/{id}")
-    public List<Integer> balayagePortUdp(@PathVariable("id") Long id){
+    @Async
+    public CompletableFuture<List<Integer>> balayagePortUdp(@PathVariable("id") Long id){
         Optional<Machine> machine = machineService.getMachine(id);
         BalayagePort balayagePort=new BalayagePort();
         List<Integer> listeUdp=new ArrayList<>();
@@ -82,7 +86,7 @@ public class BalayagePortController {
             balayagePort.setMachine(machine.get());
 
             Thread loopPort=new Thread(()->{
-                for(int i = 1; i <= 1000; i++){
+                for(int i = 0; i <= 1024; i++){
                     String param=String.valueOf(i);
                     Thread threadJob=new Thread(param){
                         @Override
@@ -121,7 +125,7 @@ public class BalayagePortController {
 
         }
         balayagePortService.saveBalayagePort(balayagePort);
-        return listeUdp;
+        return CompletableFuture.completedFuture(listeUdp);
 
     }
 }

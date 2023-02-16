@@ -1,6 +1,7 @@
 package com.isetjb.SupervisionReseaux.services;
 
 import com.isetjb.SupervisionReseaux.entities.Machine;
+import com.isetjb.SupervisionReseaux.entities.User;
 import com.isetjb.SupervisionReseaux.repositories.MachineRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,9 @@ public class MachineService {
     public Optional<Machine> getMachine(Long id) {
         return machineRepository.findById(id);
     }
-
+    public Optional<Machine> getMachineByUser(User user){
+        return machineRepository.findMachinesByUser(user);
+    }
     public Iterable<Machine> getMachines() {
         return machineRepository.findAll();
     }

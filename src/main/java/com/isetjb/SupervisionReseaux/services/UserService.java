@@ -17,6 +17,9 @@ public class UserService {
     public Optional<User> getUser(Long id) {
         return userRepository.findById(id);
     }
+    public Optional<User> getUserConnected(String userName,String password){
+        return userRepository.findUserByUserNameAndPassword(userName, password);
+    }
 
     public Iterable<User> getUsers() {
         return userRepository.findAll();

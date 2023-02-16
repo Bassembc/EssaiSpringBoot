@@ -17,7 +17,7 @@ public class User {
    
     private String userName;
     private String password;
-    private String role;
+    private String hostName;
     @OneToOne
     private Machine machine;
 
