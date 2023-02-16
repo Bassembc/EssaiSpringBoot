@@ -41,11 +41,7 @@ public class ScanPlageController {
     @Async
     public CompletableFuture<List<Machine>> checkHosts(@RequestBody Plage laPlage) {
 
-
-        User user = new User();
-        user.setUserName("Foulen");
-        user.setPassword("pasMotPasse");
-        userService.saveUser(user);
+    Optional <User> user=userService.getUserConnected("bassem","123456789");
         String[] adresseDebut =laPlage.getAddresse().split("\\.");
         Plage plage = new Plage();
         plage.setAddresse(laPlage.getAddresse());
@@ -53,7 +49,7 @@ public class ScanPlageController {
         ScanPlage scanPlage = new ScanPlage();
         scanPlage.setDateScan(LocalDateTime.now());
         scanPlage.setPlage(plage);
-        scanPlage.setUser(user);
+        scanPlage.setUser(user.get());
         List<Machine> machineList= new ArrayList<>();
         Thread loopPlage=new Thread(()->{
 
@@ -67,7 +63,7 @@ public class ScanPlageController {
                                 InetAddress address = InetAddress.getByName(ad);
                                 if(address.isReachable(500)){
 
-                                    Optional<Machine> machine = machineService.getMachineByUser(user) ;
+                                    Optional<Machine> machine = machineService.getMachineByUser(user.get()) ;
                                     if(machine.isPresent()){
                                         machine.get().setIpAddresse(ad);
                                         machineList.add(machine.get());

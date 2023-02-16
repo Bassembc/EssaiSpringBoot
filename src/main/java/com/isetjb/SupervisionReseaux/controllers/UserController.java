@@ -7,9 +7,7 @@ import com.isetjb.SupervisionReseaux.repositories.UserRepository;
 import com.isetjb.SupervisionReseaux.services.MachineService;
 import com.isetjb.SupervisionReseaux.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -36,6 +34,41 @@ public class UserController {
         return null;
 
     }
+    @PostMapping("/addUser")
+    public User addUser(@RequestBody User user){
+        User userAdded = new User();
+        userAdded.setUserName(user.getUserName());
+        userAdded.setPassword(user.getPassword());
+        userService.saveUser(userAdded);
+        return userAdded;
 
+    }
+    @PutMapping("/user/{id}")
+    public User  updateMachine(@PathVariable("id") Long id, @RequestBody User user) {
+        Optional<User> e = userService.getUser(id);
+        if (e.isPresent()) {
+            User currentUser = e.get();
+            String userName = user.getUserName();
+            String password=user.getPassword();
+            Machine machine=user.getMachine();
 
+            if (userName != null) {
+                currentUser.setUserName(userName);
+            }
+            if(password !=null){
+                currentUser.setPassword(password);
+            }
+            if(machine !=null){
+                currentUser.setMachine(machine);
+            }
+
+     userService.saveUser(currentUser);
+        }
+        return user;
+    }
+    @DeleteMapping("/user/{id}")
+    public void deleteUser(@PathVariable("id") Long id) {
+
+        userService.deleteUser(id);
+    }
 }

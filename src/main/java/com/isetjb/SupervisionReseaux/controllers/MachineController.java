@@ -69,7 +69,7 @@ public class MachineController {
             if(user !=null){
                 currentMachine.setUser(user);
             }
-
+        machineService.saveMachine(currentMachine);
 
         }
         return machine;
