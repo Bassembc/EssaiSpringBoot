@@ -36,7 +36,7 @@ public class ScanPlageController {
     @Autowired
     PlageService plageService;
     @PostMapping("/scanPlage")
-    public ScanPlage checkHosts(@RequestBody Plage laPlage) {
+    public List<Machine> checkHosts(@RequestBody Plage laPlage) {
 
 
         User user = new User();
@@ -63,13 +63,11 @@ public class ScanPlageController {
                                 String ad=adresseDebut[0]+"."+adresseDebut[1]+"."+adresseDebut[2]+"."+param;
                                 InetAddress address = InetAddress.getByName(ad);
                                 if(address.isReachable(500)){
-                                    System.out.println(address.getCanonicalHostName());
                                     Machine machine = new Machine();
                                     machine.setDateDebutConnexion(LocalDateTime.now());
-                                    machine.setHostName(address.getHostName());
+                                    machine.setIpAddresse(ad);
                                     machineService.saveMachine(machine);
                                     machineList.add(machine);
-
 
 
                                 }
@@ -78,22 +76,22 @@ public class ScanPlageController {
                                 System.out.println(e.getMessage());
                             }
 
+
                         }
                     };
                     threadJob.setPriority(MIN_PRIORITY);
                     threadJob.start();
 
                 }
+            plage.setMachines(machineList);
+            plageService.savePlage(plage);
+            scanPlageService.saveScanPlage(scanPlage);
             });
        loopPlage.setPriority(MAX_PRIORITY);
        loopPlage.start();
 
 
-        plage.setMachines(machineList);
-        plageService.savePlage(plage);
-        scanPlageService.saveScanPlage(scanPlage);
-
-        return scanPlage;
+        return machineList;
 
     }
     @GetMapping("/recupererLesScansPlage")

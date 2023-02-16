@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 
 @Entity
@@ -17,9 +19,9 @@ public class BalayagePort {
     private Long id;
     private LocalDateTime dateBalayage;
 
-    @ManyToOne
+    @OneToOne
     Machine machine;
-
     @ManyToOne
     User user;
+
 }

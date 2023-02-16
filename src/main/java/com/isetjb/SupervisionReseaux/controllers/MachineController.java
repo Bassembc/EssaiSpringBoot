@@ -19,12 +19,12 @@ public class MachineController {
 
     @PostMapping("/ajouterMachine")
     public Machine addMachine(@RequestBody Machine machine){
-        String hostName= machine.getHostName();
+        String hostName= machine.getIpAddresse();
         LocalDateTime dateConnexion=machine.getDateDebutConnexion();
         User user=machine.getUser();
         Machine machineAjouter=new Machine();
         machineAjouter.setUser(user);
-        machineAjouter.setHostName(hostName);
+        machineAjouter.setIpAddresse(hostName);
         machineAjouter.setDateDebutConnexion(dateConnexion);
         machineService.saveMachine(machineAjouter);
         return machineAjouter;
@@ -56,12 +56,12 @@ public class MachineController {
         Optional<Machine> e = machineService.getMachine(id);
         if (e.isPresent()) {
             Machine currentMachine = e.get();
-            String hostName = machine.getHostName();
+            String hostName = machine.getIpAddresse();
             LocalDateTime dateTime=LocalDateTime.now();
             User user=machine.getUser();
 
             if (hostName != null) {
-                currentMachine.setHostName(hostName);
+                currentMachine.setIpAddresse(hostName);
             }
             if(dateTime !=null){
                 currentMachine.setDateDebutConnexion(dateTime);
